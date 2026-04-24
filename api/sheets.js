@@ -1,16 +1,14 @@
 // Vercel Serverless Function — /api/sheets.js
-// Server-side proxy for Google Sheets CSV data
-// Bypasses browser CORS and Google's "Host not in allowlist" restriction
+// Server-side proxy for Google Sheets CSV data.
+// Uses one published CSV URL per content type for reliable loading.
 
-const SHEET_BASE = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRkygCswWJqKnQPsVnj27ijDHwELm27oQpG7WRjGDzB5DcZqDjcTKUUp_7c3V_baAhb3U7YbInaJuQ_/pub';
-
-const GIDS = {
-  Scholarships:  '80687518',
-  Jobs:          '488476366',
-  Internships:   '1499327830',
-  Exams:         '1358363099',
-  Books:         '1087620474',
-  Notifications: '76781237',
+const SHEET_URLS = {
+  Scholarships: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRdaG_r04rwKR63qkpha0v-REFHkI2M7aXIGNQZf7zmduv8tvV1k4TRBlafEIKKgI8QbXuL6r3rTuMo/pub?output=csv',
+  Jobs: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRfOHaqq2H2iBXWn90i11S0bfbPUa--m4Hrkvh34TC11KDTyZymdcTCryAnckRZ8MjeAUb7Bh1-6i4s/pub?output=csv',
+  Internships: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRrDPiwb4Ow0LwD2RJWpATk0b3Blrd_PR21vBn3IPes1EC6Uf9YqDucsF5jWwFrlVB_kA7oaca8uMCS/pub?output=csv',
+  Exams: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vR1ISsMtV-TMyTQleaS7sxDXAkrGHgk-MobAwOgHry2PLpKaZDQSJbu3JtiaYEYMDQW3M7cFAJO6IPp/pub?output=csv',
+  Books: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTUvgf_xYBH5igPoaGKEWTvk9MxA_VJ7a8104rnB1GJz0ef-zpjy05CjF5_XSlOEDAXh_2CzQOqn9ww/pub?output=csv',
+  Notifications: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQlGJdIw3YLBDWCXA7xnDyruQXlsDzm8KJ1cEqrjjwy-0G4leIFOp2yQF6FMhbw9hBnbajs0qb-dsrB/pub?output=csv',
 };
 
 export default async function handler(req, res) {
@@ -21,18 +19,19 @@ export default async function handler(req, res) {
   if (req.method === 'OPTIONS') return res.status(204).end();
 
   const sheet = req.query.sheet;
-
-  if (!sheet || !GIDS[sheet]) {
-    return res.status(400).json({ error: 'Missing or unknown ?sheet= param. Valid: ' + Object.keys(GIDS).join(', ') });
+  const sourceUrl = SHEET_URLS[sheet];
+  if (!sheet || !sourceUrl) {
+    return res.status(400).json({
+      error: 'Missing or unknown ?sheet= param. Valid: ' + Object.keys(SHEET_URLS).join(', '),
+    });
   }
 
   try {
-    const url = `${SHEET_BASE}?output=csv&gid=${GIDS[sheet]}&single=true`;
-    const response = await fetch(url, {
+    const response = await fetch(sourceUrl, {
       headers: {
         'User-Agent': 'Mozilla/5.0 (compatible; CareerHubBot/1.0)',
-        'Accept': 'text/csv,text/plain,*/*',
-      }
+        Accept: 'text/csv,text/plain,*/*',
+      },
     });
 
     if (!response.ok) {
@@ -41,7 +40,9 @@ export default async function handler(req, res) {
 
     const text = await response.text();
     if (text.trim().startsWith('<!') || text.includes('Host not in allowlist')) {
-      return res.status(502).json({ error: 'Sheet not accessible — make sure it is published publicly in Google Sheets' });
+      return res.status(502).json({
+        error: 'Sheet not accessible — make sure it is published publicly in Google Sheets',
+      });
     }
 
     res.setHeader('Content-Type', 'text/csv; charset=utf-8');
