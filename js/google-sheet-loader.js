@@ -13,12 +13,12 @@ const PROXY_ENDPOINT = '/api/sheets';
 const SHEET_CSV_BASE = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRkygCswWJqKnQPsVnj27ijDHwELm27oQpG7WRjGDzB5DcZqDjcTKUUp_7c3V_baAhb3U7YbInaJuQ_/pub';
 
 const TAB_DEFINITIONS = [
-  { name: 'Scholarships',  gid: '2', mapper: mapScholarship  },
-  { name: 'Jobs',          gid: '3', mapper: mapJob          },
-  { name: 'Internships',   gid: '4', mapper: mapInternship   },
-  { name: 'Exams',         gid: '5', mapper: mapExam         },
-  { name: 'Books',         gid: '6', mapper: mapBook         },
-  { name: 'Notifications', gid: '7', mapper: mapNotification },
+  { name: 'Scholarships',  gid: '80687518', mapper: mapScholarship  },
+  { name: 'Jobs',          gid: '488476366', mapper: mapJob          },
+  { name: 'Internships',   gid: '1499327830', mapper: mapInternship   },
+  { name: 'Exams',         gid: '1358363099', mapper: mapExam         },
+  { name: 'Books',         gid: '1087620474', mapper: mapBook         },
+  { name: 'Notifications', gid: '76781237', mapper: mapNotification },
 ];
 
 // ── Global data object ────────────────────────────────────────
@@ -223,7 +223,10 @@ async function _loadAllSheets(silent) {
     const text = texts[i];
     if (!text) { window.CMS_DATA[tab.name] = []; return; }
     try {
-      const mapped = _csvToObjects(text).map(tab.mapper).filter(x => x.id > 0 && x.title.trim());
+      const mapped = _csvToObjects(text).map(tab.mapper).filter(x => {
+        const primaryText = (x.title || x.message || '').trim();
+        return x.id > 0 && primaryText.length > 0;
+      });
       const prev = JSON.stringify(window.CMS_DATA[tab.name]);
       window.CMS_DATA[tab.name] = mapped;
       if (prev !== JSON.stringify(mapped)) changedTabs.push(tab.name);
