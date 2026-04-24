@@ -126,7 +126,7 @@
 <script src="js/cms-auto-refresh-listener.js"></script>
 <script src="js/chatbot-loader.js"></script>
   <script>
-  let allJobs = [];
+  let allData = [];
   document.addEventListener('DOMContentLoaded',()=>{ updateFavCount(); onCMSReady(()=>{loadData();updateFavCount();}); registerAutoRefreshSection('Jobs', loadData); initializeAutoRefreshListeners(); });
   function loadData() {
     try { allData = window.CMS_DATA['Jobs'] || []; applyFilters(); }
@@ -137,7 +137,7 @@
     const category = document.getElementById('filterCategory').value;
     const country  = document.getElementById('filterCountry').value;
     const sort     = document.getElementById('sortBy').value;
-    let filtered   = allData.filter(j => (!type||j.type===type) && (!category||j.category===category) && (!country||j.country===country));
+    let filtered   = allData.filter(j => matchesFilterValue(j.type, type) && matchesFilterValue(j.category, category) && matchesFilterValue(j.country, country));
     filtered = sortItems(filtered, sort);
     document.getElementById('resultsCount').textContent = `${filtered.length} job${filtered.length!==1?'s':''} found`;
     renderCards(filtered, 'resultsGrid', 'job');
