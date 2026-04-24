@@ -5,12 +5,12 @@
 const SHEET_BASE = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRkygCswWJqKnQPsVnj27ijDHwELm27oQpG7WRjGDzB5DcZqDjcTKUUp_7c3V_baAhb3U7YbInaJuQ_/pub';
 
 const GIDS = {
-  Scholarships:  '2',
-  Jobs:          '3',
-  Internships:   '4',
-  Exams:         '5',
-  Books:         '6',
-  Notifications: '7',
+  Scholarships:  '80687518',
+  Jobs:          '488476366',
+  Internships:   '1499327830',
+  Exams:         '1358363099',
+  Books:         '1087620474',
+  Notifications: '76781237',
 };
 
 export default async function handler(req, res) {
