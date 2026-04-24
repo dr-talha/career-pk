@@ -138,78 +138,142 @@ function _csvToObjects(text) {
     if (!row[0] || isNaN(Number(row[0]))) continue;
     const obj = {};
     headers.forEach((h, i) => { obj[h] = (row[i] || '').trim(); });
+    obj.__norm = _normalizeRowHeaders(obj);
     out.push(obj);
   }
   return out;
 }
 
-function _bool(v) { return /yes|true|✅/i.test(v || ''); }
+function _normalizeHeaderKey(v) {
+  return String(v || '')
+    .trim()
+    .toLowerCase()
+    .normalize('NFKD')
+    .replace(/[^\p{L}\p{N}]+/gu, '');
+}
+
+function _normalizeRowHeaders(row) {
+  const normalized = {};
+  Object.keys(row).forEach((key) => {
+    normalized[_normalizeHeaderKey(key)] = row[key];
+  });
+  return normalized;
+}
+
+function _getField(row, aliases, fallback = '') {
+  for (const alias of aliases) {
+    if (row[alias] != null && row[alias] !== '') return row[alias];
+    const normalized = row.__norm?.[_normalizeHeaderKey(alias)];
+    if (normalized != null && normalized !== '') return normalized;
+  }
+  return fallback;
+}
+
+function _bool(v) {
+  return /^(yes|true|1|y|active|on|✅)$/i.test(String(v || '').trim());
+}
 
 // ── Mappers ───────────────────────────────────────────────────
 function mapScholarship(r) {
   return {
-    id: Number(r['ID']) || 0, title: r['Title'] || '',
-    description: r['Description'] || '', country: r['Country'] || '',
-    type: r['Type'] || '', funding: r['Funding'] || '',
-    deadline: r['Deadline'] || '', posted_date: r['Posted'] || '',
-    apply_link: r['Apply Link'] || '', tags: r['Tags'] || '',
-    is_featured: _bool(r['Featured?']), image_url: r['Image URL'] || '',
-    location: r['Location'] || '', level: r['Level'] || '',
-    host_organization: r['Host Organization'] || '',
+    id: Number(_getField(r, ['ID'])) || 0,
+    title: _getField(r, ['Title']),
+    description: _getField(r, ['Description']),
+    country: _getField(r, ['Country']),
+    type: _getField(r, ['Type']),
+    funding: _getField(r, ['Funding']),
+    deadline: _getField(r, ['Deadline']),
+    posted_date: _getField(r, ['Posted', 'Posted Date']),
+    apply_link: _getField(r, ['Apply Link', 'Apply URL']),
+    tags: _getField(r, ['Tags']),
+    is_featured: _bool(_getField(r, ['Featured?', 'Featured'])),
+    image_url: _getField(r, ['Image URL', 'Image']),
+    location: _getField(r, ['Location']),
+    level: _getField(r, ['Level']),
+    host_organization: _getField(r, ['Host Organization', 'Host Organisation']),
   };
 }
 function mapJob(r) {
   return {
-    id: Number(r['ID']) || 0, title: r['Title'] || '',
-    description: r['Description'] || '', category: r['Category'] || '',
-    country: r['Country'] || '', type: r['Type'] || '',
-    deadline: r['Deadline'] || '', posted_date: r['Posted'] || '',
-    apply_link: r['Apply Link'] || '', tags: r['Tags'] || '',
-    is_featured: _bool(r['Featured?']), image_url: r['Image URL'] || '',
-    location: r['Location'] || '', salary: r['Salary'] || '',
-    experience: r['Experience'] || '',
+    id: Number(_getField(r, ['ID'])) || 0,
+    title: _getField(r, ['Title']),
+    description: _getField(r, ['Description']),
+    category: _getField(r, ['Category']),
+    country: _getField(r, ['Country']),
+    type: _getField(r, ['Type']),
+    deadline: _getField(r, ['Deadline']),
+    posted_date: _getField(r, ['Posted', 'Posted Date']),
+    apply_link: _getField(r, ['Apply Link', 'Apply URL']),
+    tags: _getField(r, ['Tags']),
+    is_featured: _bool(_getField(r, ['Featured?', 'Featured'])),
+    image_url: _getField(r, ['Image URL', 'Image']),
+    location: _getField(r, ['Location']),
+    salary: _getField(r, ['Salary']),
+    experience: _getField(r, ['Experience']),
   };
 }
 function mapInternship(r) {
   return {
-    id: Number(r['ID']) || 0, title: r['Title'] || '',
-    description: r['Description'] || '', organization: r['Organization'] || '',
-    country: r['Country'] || '', stipend: r['Stipend'] || '',
-    deadline: r['Deadline'] || '', posted_date: r['Posted'] || '',
-    apply_link: r['Apply Link'] || '', tags: r['Tags'] || '',
-    is_featured: _bool(r['Featured?']), image_url: r['Image URL'] || '',
-    location: r['Location'] || '', duration: r['Duration'] || '',
-    type: r['Type'] || '',
+    id: Number(_getField(r, ['ID'])) || 0,
+    title: _getField(r, ['Title']),
+    description: _getField(r, ['Description']),
+    organization: _getField(r, ['Organization', 'Organisation']),
+    country: _getField(r, ['Country']),
+    stipend: _getField(r, ['Stipend']),
+    deadline: _getField(r, ['Deadline']),
+    posted_date: _getField(r, ['Posted', 'Posted Date']),
+    apply_link: _getField(r, ['Apply Link', 'Apply URL']),
+    tags: _getField(r, ['Tags']),
+    is_featured: _bool(_getField(r, ['Featured?', 'Featured'])),
+    image_url: _getField(r, ['Image URL', 'Image']),
+    location: _getField(r, ['Location']),
+    duration: _getField(r, ['Duration']),
+    type: _getField(r, ['Type']),
   };
 }
 function mapExam(r) {
   return {
-    id: Number(r['ID']) || 0, title: r['Title'] || '',
-    exam_type: r['Exam Type'] || '', syllabus_link: r['Syllabus Link'] || '',
-    test_date: r['Test Date'] || '', results_link: r['Results Link'] || '',
-    past_papers_link: r['Past Papers Link'] || '', fee: r['Fee'] || '',
-    tags: r['Tags'] || '', image_url: r['Image URL'] || '',
-    registration_link: r['Registration Link'] || '',
-    eligibility: r['Eligibility'] || '', conducting_body: r['Conducting Body'] || '',
+    id: Number(_getField(r, ['ID'])) || 0,
+    title: _getField(r, ['Title']),
+    exam_type: _getField(r, ['Exam Type']),
+    syllabus_link: _getField(r, ['Syllabus Link']),
+    test_date: _getField(r, ['Test Date']),
+    results_link: _getField(r, ['Results Link']),
+    past_papers_link: _getField(r, ['Past Papers Link']),
+    fee: _getField(r, ['Fee']),
+    tags: _getField(r, ['Tags']),
+    image_url: _getField(r, ['Image URL', 'Image']),
+    registration_link: _getField(r, ['Registration Link']),
+    eligibility: _getField(r, ['Eligibility']),
+    conducting_body: _getField(r, ['Conducting Body']),
   };
 }
 function mapBook(r) {
   return {
-    id: Number(r['ID']) || 0, title: r['Title'] || '',
-    category: r['Category'] || '', exam_type: r['Exam Type'] || '',
-    author: r['Author'] || '', download_link: r['Download Link'] || '',
-    buy_link: r['Buy Link'] || '', is_free: _bool(r['Free?']),
-    tags: r['Tags'] || '', image_url: r['Image URL'] || '',
-    edition: r['Edition'] || '', language: r['Language'] || '',
+    id: Number(_getField(r, ['ID'])) || 0,
+    title: _getField(r, ['Title']),
+    category: _getField(r, ['Category']),
+    exam_type: _getField(r, ['Exam Type']),
+    author: _getField(r, ['Author']),
+    download_link: _getField(r, ['Download Link']),
+    buy_link: _getField(r, ['Buy Link']),
+    is_free: _bool(_getField(r, ['Free?', 'Free'])),
+    tags: _getField(r, ['Tags']),
+    image_url: _getField(r, ['Image URL', 'Image']),
+    edition: _getField(r, ['Edition']),
+    language: _getField(r, ['Language']),
   };
 }
 function mapNotification(r) {
-  const expiry = r['Expiry Date'] || '';
+  const expiry = _getField(r, ['Expiry Date', 'Expiry']);
   const expired = expiry ? new Date(expiry) < new Date() : false;
   return {
-    id: Number(r['ID']) || 0, message: r['Message'] || '',
-    type: r['Type'] || '', expiry_date: expiry,
-    is_active: _bool(r['Active?']) && !expired, link: r['Link'] || '',
+    id: Number(_getField(r, ['ID'])) || 0,
+    message: _getField(r, ['Message']),
+    type: _getField(r, ['Type']),
+    expiry_date: expiry,
+    is_active: _bool(_getField(r, ['Active?', 'Active'])) && !expired,
+    link: _getField(r, ['Link']),
   };
 }
 
