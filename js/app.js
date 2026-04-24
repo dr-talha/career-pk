@@ -13,6 +13,55 @@ function text(value) {
   return String(value ?? '');
 }
 
+function normalizeText(value) {
+  return text(value).trim().toLowerCase();
+}
+
+function matchesFilterValue(value, filterValue) {
+  if (!filterValue) return true;
+  return normalizeText(value) === normalizeText(filterValue);
+}
+
+function includesFilterValue(value, filterValue) {
+  if (!filterValue) return true;
+  return normalizeText(value).includes(normalizeText(filterValue));
+}
+
+function isGovernmentType(value) {
+  const normalized = normalizeText(value);
+  return normalized === 'government' ||
+    normalized === 'govt' ||
+    normalized.includes('government') ||
+    normalized.includes('govt') ||
+    normalized.includes('public sector');
+}
+
+function isPakistanValue(value) {
+  const normalized = normalizeText(value);
+  if (!normalized) return false;
+  return normalized === 'pakistan' || normalized === 'pk' || /\bpakistan\b/.test(normalized);
+}
+
+function scholarshipMatchesCountry(scholarship, selectedCountry) {
+  if (!selectedCountry) return true;
+  const selected = normalizeText(selectedCountry);
+  const country = text(scholarship.country);
+  const location = text(scholarship.location);
+  const type = text(scholarship.type);
+  const fields = [country, location, type];
+
+  if (selected === 'pakistan') {
+    return fields.some(isPakistanValue);
+  }
+  if (selected === 'international') {
+    const explicitlyInternational = fields.some(v => includesFilterValue(v, 'international'));
+    const hasCountry = normalizeText(country).length > 0;
+    return explicitlyInternational || (hasCountry && !isPakistanValue(country));
+  }
+
+  return fields.some(v => matchesFilterValue(v, selectedCountry));
+}
+
 function escapeHtml(value) {
   return text(value)
     .replace(/&/g, '&amp;')
