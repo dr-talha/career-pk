@@ -140,7 +140,7 @@ function _csvToObjects(text) {
   const out = [];
   for (let r = hIdx + 1; r < rows.length; r++) {
     const row = rows[r];
-    if (!row[0] || isNaN(Number(row[0]))) continue;
+    if (!row || row.every(cell => String(cell || '').trim() === '')) continue;
     const obj = {};
     headers.forEach((h, i) => { obj[h] = (row[i] || '').trim(); });
     obj.__rowIndex = r - hIdx;
