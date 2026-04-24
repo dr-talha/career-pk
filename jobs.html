@@ -78,8 +78,8 @@
   <script>
   let allData=[];
   document.addEventListener('DOMContentLoaded',()=>{ updateFavCount(); onCMSReady(()=>{loadData();updateFavCount();}); registerAutoRefreshSection('Jobs', loadData); initializeAutoRefreshListeners(); });
-  function loadData(){try{const d=window.CMS_DATA['Jobs'] || [];allData=d.filter(j=>j.type!=='Government');applyFilters();}catch(e){document.getElementById('errorState').style.display='flex';}}
-  function applyFilters(){const type=document.getElementById('filterType').value;const cat=document.getElementById('filterCategory').value;const sort=document.getElementById('sortBy').value;let f=allData.filter(j=>(!type||j.type===type)&&(!cat||j.category===cat));f=sortItems(f,sort);document.getElementById('resultsCount').textContent=`${f.length} job${f.length!==1?'s':''} found`;renderCards(f,'resultsGrid','job');document.getElementById('emptyState').style.display=f.length===0?'flex':'none';}
+  function loadData(){try{const d=window.CMS_DATA['Jobs'] || [];allData=d.filter(j=>!isGovernmentType(j.type));applyFilters();}catch(e){document.getElementById('errorState').style.display='flex';}}
+  function applyFilters(){const type=document.getElementById('filterType').value;const cat=document.getElementById('filterCategory').value;const sort=document.getElementById('sortBy').value;let f=allData.filter(j=>matchesFilterValue(j.type,type)&&matchesFilterValue(j.category,cat));f=sortItems(f,sort);document.getElementById('resultsCount').textContent=`${f.length} job${f.length!==1?'s':''} found`;renderCards(f,'resultsGrid','job');document.getElementById('emptyState').style.display=f.length===0?'flex':'none';}
   function clearFilters(){['filterType','filterCategory'].forEach(id=>document.getElementById(id).value='');document.getElementById('sortBy').value='newest';applyFilters();}
 </script>
 </body></html>
