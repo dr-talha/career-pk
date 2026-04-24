@@ -9,6 +9,39 @@
 function fetchSheet(sheetName) {
   return Promise.resolve((window.CMS_DATA[sheetName] || []).slice());
 }
+function text(value) {
+  return String(value ?? '');
+}
+
+function escapeHtml(value) {
+  return text(value)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function safeUrl(url) {
+  const raw = text(url).trim();
+  if (!raw) return '#';
+  try {
+    const parsed = new URL(raw, window.location.origin);
+    if (!['http:', 'https:'].includes(parsed.protocol)) return '#';
+    return parsed.href;
+  } catch {
+    return '#';
+  }
+}
+
+function escapeJsSingleQuote(value) {
+  return text(value)
+    .replace(/\\/g, '\\\\')
+    .replace(/'/g, "\\'")
+    .replace(/\r/g, '\\r')
+    .replace(/\n/g, '\\n')
+    .replace(/<\/script/gi, '<\\/script');
+}
 
 // ── Days until deadline ──────────────────────────────────────
 function daysUntil(dateStr) {
@@ -76,7 +109,7 @@ function cardScholarship(s) {
   const fav = isFav(s.id, 'scholarship');
   const src = imgSrc(s.image_url, 'scholarship');
   const imgHTML = src
-    ? `<img src="${src}" alt="${s.title}" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`
+    ? `<img src="${escapeHtml(src)}" alt="${escapeHtml(s.title)}" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`
     : '';
   return `
   <div class="card" data-id="${s.id}" data-type="scholarship">
@@ -88,21 +121,21 @@ function cardScholarship(s) {
     </div>
     <div class="card-body">
       <div class="card-meta">
-        <span class="card-tag">${s.type || ''}</span>
-        <span class="card-tag fund-${(s.funding||'').toLowerCase().replace(' ','-')}">${s.funding || ''}</span>
+        <span class="card-tag">${escapeHtml(s.type || '')}</span>
+        <span class="card-tag fund-${escapeHtml((s.funding || '').toLowerCase().replace(/\s+/g, '-'))}">${escapeHtml(s.funding || '')}</span>
       </div>
-      <h3 class="card-title">${s.title}</h3>
-      <p class="card-desc">${s.description}</p>
+      <h3 class="card-title">${escapeHtml(s.title)}</h3>
+      <p class="card-desc">${escapeHtml(s.description)}</p>
       <div class="card-details">
-        ${s.location ? `<span><i class="fa fa-map-marker-alt"></i> ${s.location}</span>` : ''}
-        ${s.level ? `<span><i class="fa fa-graduation-cap"></i> ${s.level}</span>` : ''}
+        ${s.location ? `<span><i class="fa fa-map-marker-alt"></i> ${escapeHtml(s.location)}</span>` : ''}
+        ${s.level ? `<span><i class="fa fa-graduation-cap"></i> ${escapeHtml(s.level)}</span>` : ''}
         ${s.deadline ? `<span><i class="fa fa-calendar"></i> ${formatDate(s.deadline)}</span>` : ''}
       </div>
       ${renderTags(s.tags)}
     </div>
     <div class="card-footer">
-      <a href="${s.apply_link || '#'}" target="_blank" rel="noopener" class="btn btn-primary">Apply Now <i class="fa fa-arrow-right"></i></a>
-      <button class="btn-fav ${fav ? 'active' : ''}" onclick="handleFav(${s.id},'${s.title.replace(/'/g,"\\'")}','scholarship',this)" aria-label="Save">
+      <a href="${safeUrl(s.apply_link)}" target="_blank" rel="noopener noreferrer" class="btn btn-primary">Apply Now <i class="fa fa-arrow-right"></i></a>
+      <button class="btn-fav ${fav ? 'active' : ''}" onclick="handleFav(${Number(s.id) || 0},'${escapeJsSingleQuote(s.title)}','scholarship',this)" aria-label="Save">
         <i class="fa${fav ? 's' : 'r'} fa-bookmark"></i>
       </button>
     </div>
@@ -112,7 +145,7 @@ function cardScholarship(s) {
 function cardJob(j) {
   const fav = isFav(j.id, 'job');
   const src = imgSrc(j.image_url, 'job');
-  const imgHTML = src ? `<img src="${src}" alt="${j.title}" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">` : '';
+  const imgHTML = src ? `<img src="${escapeHtml(src)}" alt="${escapeHtml(j.title)}" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">` : '';
   return `
   <div class="card" data-id="${j.id}" data-type="job">
     <div class="card-img">
@@ -123,21 +156,21 @@ function cardJob(j) {
     </div>
     <div class="card-body">
       <div class="card-meta">
-        <span class="card-tag">${j.type || ''}</span>
-        <span class="card-tag">${j.category || ''}</span>
+        <span class="card-tag">${escapeHtml(j.type || '')}</span>
+        <span class="card-tag">${escapeHtml(j.category || '')}</span>
       </div>
-      <h3 class="card-title">${j.title}</h3>
-      <p class="card-desc">${j.description}</p>
+      <h3 class="card-title">${escapeHtml(j.title)}</h3>
+      <p class="card-desc">${escapeHtml(j.description)}</p>
       <div class="card-details">
-        ${j.location ? `<span><i class="fa fa-map-marker-alt"></i> ${j.location}</span>` : ''}
-        ${j.salary ? `<span><i class="fa fa-money-bill"></i> ${j.salary}</span>` : ''}
+        ${j.location ? `<span><i class="fa fa-map-marker-alt"></i> ${escapeHtml(j.location)}</span>` : ''}
+        ${j.salary ? `<span><i class="fa fa-money-bill"></i> ${escapeHtml(j.salary)}</span>` : ''}
         ${j.deadline ? `<span><i class="fa fa-calendar"></i> ${formatDate(j.deadline)}</span>` : ''}
       </div>
       ${renderTags(j.tags)}
     </div>
     <div class="card-footer">
-      <a href="${j.apply_link || '#'}" target="_blank" rel="noopener" class="btn btn-primary">Apply Now <i class="fa fa-arrow-right"></i></a>
-      <button class="btn-fav ${fav ? 'active' : ''}" onclick="handleFav(${j.id},'${j.title.replace(/'/g,"\\'")}','job',this)">
+      <a href="${safeUrl(j.apply_link)}" target="_blank" rel="noopener noreferrer" class="btn btn-primary">Apply Now <i class="fa fa-arrow-right"></i></a>
+      <button class="btn-fav ${fav ? 'active' : ''}" onclick="handleFav(${Number(j.id) || 0},'${escapeJsSingleQuote(j.title)}','job',this)">
         <i class="fa${fav ? 's' : 'r'} fa-bookmark"></i>
       </button>
     </div>
@@ -147,7 +180,7 @@ function cardJob(j) {
 function cardInternship(i) {
   const fav = isFav(i.id, 'internship');
   const src = imgSrc(i.image_url, 'internship');
-  const imgHTML = src ? `<img src="${src}" alt="${i.title}" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">` : '';
+  const imgHTML = src ? `<img src="${escapeHtml(src)}" alt="${escapeHtml(i.title)}" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">` : '';
   const paidClass = (i.type || '').toLowerCase() === 'paid' ? 'paid' : 'unpaid';
   return `
   <div class="card" data-id="${i.id}" data-type="internship">
@@ -159,21 +192,21 @@ function cardInternship(i) {
     </div>
     <div class="card-body">
       <div class="card-meta">
-        <span class="card-tag ${paidClass}">${i.type || ''}</span>
-        ${i.duration ? `<span class="card-tag">${i.duration}</span>` : ''}
+        <span class="card-tag ${paidClass}">${escapeHtml(i.type || '')}</span>
+        ${i.duration ? `<span class="card-tag">${escapeHtml(i.duration)}</span>` : ''}
       </div>
-      <h3 class="card-title">${i.title}</h3>
-      <p class="card-desc">${i.description}</p>
+      <h3 class="card-title">${escapeHtml(i.title)}</h3>
+      <p class="card-desc">${escapeHtml(i.description)}</p>
       <div class="card-details">
-        ${i.location ? `<span><i class="fa fa-map-marker-alt"></i> ${i.location}</span>` : ''}
-        ${i.stipend ? `<span><i class="fa fa-money-bill"></i> ${i.stipend}</span>` : ''}
+        ${i.location ? `<span><i class="fa fa-map-marker-alt"></i> ${escapeHtml(i.location)}</span>` : ''}
+        ${i.stipend ? `<span><i class="fa fa-money-bill"></i> ${escapeHtml(i.stipend)}</span>` : ''}
         ${i.deadline ? `<span><i class="fa fa-calendar"></i> ${formatDate(i.deadline)}</span>` : ''}
       </div>
       ${renderTags(i.tags)}
     </div>
     <div class="card-footer">
-      <a href="${i.apply_link || '#'}" target="_blank" rel="noopener" class="btn btn-primary">Apply Now <i class="fa fa-arrow-right"></i></a>
-      <button class="btn-fav ${fav ? 'active' : ''}" onclick="handleFav(${i.id},'${i.title.replace(/'/g,"\\'")}','internship',this)">
+      <a href="${safeUrl(i.apply_link)}" target="_blank" rel="noopener noreferrer" class="btn btn-primary">Apply Now <i class="fa fa-arrow-right"></i></a>
+      <button class="btn-fav ${fav ? 'active' : ''}" onclick="handleFav(${Number(i.id) || 0},'${escapeJsSingleQuote(i.title)}','internship',this)">
         <i class="fa${fav ? 's' : 'r'} fa-bookmark"></i>
       </button>
     </div>
@@ -182,7 +215,7 @@ function cardInternship(i) {
 
 function cardExam(e) {
   const src = imgSrc(e.image_url, 'exam');
-  const imgHTML = src ? `<img src="${src}" alt="${e.title}" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">` : '';
+  const imgHTML = src ? `<img src="${escapeHtml(src)}" alt="${escapeHtml(e.title)}" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">` : '';
   return `
   <div class="card" data-id="${e.id}" data-type="exam">
     <div class="card-img">
@@ -192,28 +225,28 @@ function cardExam(e) {
     </div>
     <div class="card-body">
       <div class="card-meta">
-        <span class="card-tag">${e.exam_type || ''}</span>
-        ${e.fee ? `<span class="card-tag">${e.fee}</span>` : ''}
+        <span class="card-tag">${escapeHtml(e.exam_type || '')}</span>
+        ${e.fee ? `<span class="card-tag">${escapeHtml(e.fee)}</span>` : ''}
       </div>
-      <h3 class="card-title">${e.title}</h3>
+      <h3 class="card-title">${escapeHtml(e.title)}</h3>
       <div class="card-details">
         ${e.test_date ? `<span><i class="fa fa-calendar"></i> Test: ${formatDate(e.test_date)}</span>` : ''}
-        ${e.eligibility ? `<span><i class="fa fa-user-check"></i> ${e.eligibility}</span>` : ''}
-        ${e.conducting_body ? `<span><i class="fa fa-building"></i> ${e.conducting_body}</span>` : ''}
+        ${e.eligibility ? `<span><i class="fa fa-user-check"></i> ${escapeHtml(e.eligibility)}</span>` : ''}
+        ${e.conducting_body ? `<span><i class="fa fa-building"></i> ${escapeHtml(e.conducting_body)}</span>` : ''}
       </div>
       ${renderTags(e.tags)}
     </div>
     <div class="card-footer exam-links">
-      ${e.registration_link ? `<a href="${e.registration_link}" target="_blank" class="btn btn-primary">Register <i class="fa fa-arrow-right"></i></a>` : ''}
-      ${e.syllabus_link ? `<a href="${e.syllabus_link}" target="_blank" class="btn btn-secondary">Syllabus</a>` : ''}
-      ${e.past_papers_link ? `<a href="${e.past_papers_link}" target="_blank" class="btn btn-secondary">Past Papers</a>` : ''}
+      ${e.registration_link ? `<a href="${safeUrl(e.registration_link)}" target="_blank" rel="noopener noreferrer" class="btn btn-primary">Register <i class="fa fa-arrow-right"></i></a>` : ''}
+      ${e.syllabus_link ? `<a href="${safeUrl(e.syllabus_link)}" target="_blank" rel="noopener noreferrer" class="btn btn-secondary">Syllabus</a>` : ''}
+      ${e.past_papers_link ? `<a href="${safeUrl(e.past_papers_link)}" target="_blank" rel="noopener noreferrer" class="btn btn-secondary">Past Papers</a>` : ''}
     </div>
   </div>`;
 }
 
 function cardBook(b) {
   const src = imgSrc(b.image_url, 'book');
-  const imgHTML = src ? `<img src="${src}" alt="${b.title}" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">` : '';
+  const imgHTML = src ? `<img src="${escapeHtml(src)}" alt="${escapeHtml(b.title)}" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">` : '';
   return `
   <div class="card" data-id="${b.id}" data-type="book">
     <div class="card-img">
@@ -223,20 +256,20 @@ function cardBook(b) {
     </div>
     <div class="card-body">
       <div class="card-meta">
-        <span class="card-tag">${b.exam_type || ''}</span>
-        ${b.language ? `<span class="card-tag">${b.language}</span>` : ''}
+        <span class="card-tag">${escapeHtml(b.exam_type || '')}</span>
+        ${b.language ? `<span class="card-tag">${escapeHtml(b.language)}</span>` : ''}
       </div>
-      <h3 class="card-title">${b.title}</h3>
+      <h3 class="card-title">${escapeHtml(b.title)}</h3>
       <div class="card-details">
-        ${b.author ? `<span><i class="fa fa-user"></i> ${b.author}</span>` : ''}
-        ${b.edition ? `<span><i class="fa fa-book"></i> ${b.edition}</span>` : ''}
-        ${b.category ? `<span><i class="fa fa-tag"></i> ${b.category}</span>` : ''}
+        ${b.author ? `<span><i class="fa fa-user"></i> ${escapeHtml(b.author)}</span>` : ''}
+        ${b.edition ? `<span><i class="fa fa-book"></i> ${escapeHtml(b.edition)}</span>` : ''}
+        ${b.category ? `<span><i class="fa fa-tag"></i> ${escapeHtml(b.category)}</span>` : ''}
       </div>
       ${renderTags(b.tags)}
     </div>
     <div class="card-footer">
-      ${b.is_free && b.download_link ? `<a href="${b.download_link}" target="_blank" class="btn btn-primary">📥 Download PDF</a>` : ''}
-      ${b.buy_link ? `<a href="${b.buy_link}" target="_blank" class="btn btn-secondary">🛒 Buy</a>` : ''}
+      ${b.is_free && b.download_link ? `<a href="${safeUrl(b.download_link)}" target="_blank" rel="noopener noreferrer" class="btn btn-primary">📥 Download PDF</a>` : ''}
+      ${b.buy_link ? `<a href="${safeUrl(b.buy_link)}" target="_blank" rel="noopener noreferrer" class="btn btn-secondary">🛒 Buy</a>` : ''}
     </div>
   </div>`;
 }
@@ -307,8 +340,8 @@ function loadNotifications() {
   const notifs = (window.CMS_DATA.Notifications || []).filter(n => n.is_active);
   if (notifs.length === 0) return;
   const html = notifs.map(n =>
-    `<a href="${n.link || '#'}" target="_blank" style="color:inherit;text-decoration:none;">${n.message}</a>`
-  ).join('&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;');
+    `<a href="${safeUrl(n.link)}" target="_blank" rel="noopener noreferrer" style="color:inherit;text-decoration:none;">${escapeHtml(n.message)}</a>`
+).join('&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;');
   track.innerHTML = `<span>${html}&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;${html}</span>`;
 }
 
@@ -354,10 +387,10 @@ function showPopup() {
     return d !== null && d > 0 && d <= 30;
   });
   if (!urgent) return;
-  document.getElementById('popupTitle').textContent = urgent.title;
-  document.getElementById('popupDesc').textContent = urgent.description;
+  document.getElementById('popupTitle').textContent = text(urgent.title);
+  document.getElementById('popupDesc').textContent = text(urgent.description);
   document.getElementById('popupDeadline').textContent = formatDate(urgent.deadline);
-  document.getElementById('popupLink').href = urgent.apply_link || '#';
+  document.getElementById('popupLink').href = safeUrl(urgent.apply_link);
   document.getElementById('popupOverlay').style.display = 'block';
   document.getElementById('popupModal').style.display = 'block';
 }
@@ -373,23 +406,23 @@ function runSearch(query) {
   const results = [];
 
   (window.CMS_DATA.Scholarships || []).forEach(s => {
-    if ((s.title + s.description + s.tags).toLowerCase().includes(q))
+    if ((text(j.title) + text(j.description) + text(j.tags)).toLowerCase().includes(q))
       results.push({...s, _type:'scholarship'});
   });
   (window.CMS_DATA.Jobs || []).forEach(j => {
-    if ((j.title + j.description + j.tags).toLowerCase().includes(q))
+    if ((text(j.title) + text(j.description) + text(j.tags)).toLowerCase().includes(q))
       results.push({...j, _type:'job'});
   });
   (window.CMS_DATA.Internships || []).forEach(i => {
-    if ((i.title + i.description + i.tags).toLowerCase().includes(q))
+    if ((text(i.title) + text(i.description) + text(i.tags)).toLowerCase().includes(q))
       results.push({...i, _type:'internship'});
   });
   (window.CMS_DATA.Exams || []).forEach(e => {
-    if ((e.title + e.tags).toLowerCase().includes(q))
+    if ((text(e.title) + text(e.tags)).toLowerCase().includes(q))
       results.push({...e, _type:'exam'});
   });
   (window.CMS_DATA.Books || []).forEach(b => {
-    if ((b.title + b.tags + b.author).toLowerCase().includes(q))
+    if ((text(b.title) + text(b.tags) + text(b.author)).toLowerCase().includes(q))
       results.push({...b, _type:'book'});
   });
 
