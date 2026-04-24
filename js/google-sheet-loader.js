@@ -126,9 +126,16 @@ function _csvToObjects(text) {
   if (rows.length < 2) return [];
   let hIdx = -1;
   for (let r = 0; r < Math.min(rows.length, 6); r++) {
-    if (rows[r].some(c => c.trim().toUpperCase() === 'ID')) { hIdx = r; break; }
+    const normalizedHeaders = rows[r].map(c => _normalizeHeaderKey(c));
+    const hasKnownHeader =
+      normalizedHeaders.includes('id') ||
+      normalizedHeaders.includes('title') ||
+      normalizedHeaders.includes('message') ||
+      normalizedHeaders.includes('description') ||
+      normalizedHeaders.includes('applylink');
+    if (hasKnownHeader) { hIdx = r; break; }
   }
-  if (hIdx === -1) return [];
+  if (hIdx === -1) hIdx = 0;
   const headers = rows[hIdx].map(h => h.trim());
   const out = [];
   for (let r = hIdx + 1; r < rows.length; r++) {
@@ -136,6 +143,7 @@ function _csvToObjects(text) {
     if (!row[0] || isNaN(Number(row[0]))) continue;
     const obj = {};
     headers.forEach((h, i) => { obj[h] = (row[i] || '').trim(); });
+    obj.__rowIndex = r - hIdx;
     obj.__norm = _normalizeRowHeaders(obj);
     out.push(obj);
   }
@@ -174,7 +182,7 @@ function _bool(v) {
 // ── Mappers ───────────────────────────────────────────────────
 function mapScholarship(r) {
   return {
-    id: Number(_getField(r, ['ID'])) || 0,
+    id: Number(_getField(r, ['ID'])) || Number(r.__rowIndex) || 0,
     title: _getField(r, ['Title']),
     description: _getField(r, ['Description']),
     country: _getField(r, ['Country']),
@@ -193,7 +201,7 @@ function mapScholarship(r) {
 }
 function mapJob(r) {
   return {
-    id: Number(_getField(r, ['ID'])) || 0,
+    id: Number(_getField(r, ['ID'])) || Number(r.__rowIndex) || 0,
     title: _getField(r, ['Title']),
     description: _getField(r, ['Description']),
     category: _getField(r, ['Category']),
@@ -212,7 +220,7 @@ function mapJob(r) {
 }
 function mapInternship(r) {
   return {
-    id: Number(_getField(r, ['ID'])) || 0,
+    id: Number(_getField(r, ['ID'])) || Number(r.__rowIndex) || 0,
     title: _getField(r, ['Title']),
     description: _getField(r, ['Description']),
     organization: _getField(r, ['Organization', 'Organisation']),
@@ -231,7 +239,7 @@ function mapInternship(r) {
 }
 function mapExam(r) {
   return {
-    id: Number(_getField(r, ['ID'])) || 0,
+    id: Number(_getField(r, ['ID'])) || Number(r.__rowIndex) || 0,
     title: _getField(r, ['Title']),
     exam_type: _getField(r, ['Exam Type']),
     syllabus_link: _getField(r, ['Syllabus Link']),
@@ -248,7 +256,7 @@ function mapExam(r) {
 }
 function mapBook(r) {
   return {
-    id: Number(_getField(r, ['ID'])) || 0,
+    id: Number(_getField(r, ['ID'])) || Number(r.__rowIndex) || 0,
     title: _getField(r, ['Title']),
     category: _getField(r, ['Category']),
     exam_type: _getField(r, ['Exam Type']),
@@ -266,7 +274,7 @@ function mapNotification(r) {
   const expiry = _getField(r, ['Expiry Date', 'Expiry']);
   const expired = expiry ? new Date(expiry) < new Date() : false;
   return {
-    id: Number(_getField(r, ['ID'])) || 0,
+    id: Number(_getField(r, ['ID'])) || Number(r.__rowIndex) || 0,
     message: _getField(r, ['Message']),
     type: _getField(r, ['Type']),
     expiry_date: expiry,
