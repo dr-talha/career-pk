@@ -9,6 +9,13 @@
 function fetchSheet(sheetName) {
   return Promise.resolve((window.CMS_DATA[sheetName] || []).slice());
 }
+function whenCMSReady(fn) {
+  if (typeof window.onCMSReady === 'function') {
+    window.onCMSReady(fn);
+    return;
+  }
+  fn(window.CMS_DATA || {});
+}
 function text(value) {
   return String(value ?? '');
 }
@@ -544,7 +551,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('navbar')?.classList.toggle('scrolled', window.scrollY > 50);
   });
   // Run CMS-dependent things only after data is ready
-  onCMSReady(() => {
+   whenCMSReady(() => {
     loadNotifications();
     updateFavCount();
     // Popup on homepage after 4s
