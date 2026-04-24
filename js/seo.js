@@ -1,8 +1,9 @@
 // CareerHub Pakistan — seo.js (enhanced)
 // Runs deferred: fixes canonical, ensures OG/Twitter completeness, injects breadcrumbs
 (function () {
-  const SITE_URL = 'https://careerhub.pk';
-  const DEFAULT_IMAGE = SITE_URL + '/assets/og-default.jpg';
+  const currentUrl = new URL(window.location.href);
+  const SITE_URL = `${currentUrl.protocol}//${currentUrl.host}`;
+  const DEFAULT_IMAGE = `${SITE_URL}/logo-banner.svg`;
 
   const ensureMeta = (attr, key, value) => {
     if (!value) return;
