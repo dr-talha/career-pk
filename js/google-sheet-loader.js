@@ -9,12 +9,12 @@ const SHEET_CSV_BASE = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRkygCsw
 
 // Numeric GID for each tab — update these if you reorder tabs in your sheet
 const TAB_DEFINITIONS = [
-  { name: 'Scholarships',  gid: '0',   mapper: mapScholarship  },
-  { name: 'Jobs',          gid: '1',   mapper: mapJob          },
-  { name: 'Internships',   gid: '2',   mapper: mapInternship   },
-  { name: 'Exams',         gid: '3',   mapper: mapExam         },
-  { name: 'Books',         gid: '4',   mapper: mapBook         },
-  { name: 'Notifications', gid: '5',   mapper: mapNotification },
+  { name: 'Scholarships',  gid: '2',   mapper: mapScholarship  },
+  { name: 'Jobs',          gid: '3',   mapper: mapJob          },
+  { name: 'Internships',   gid: '4',   mapper: mapInternship   },
+  { name: 'Exams',         gid: '5',   mapper: mapExam         },
+  { name: 'Books',         gid: '6',   mapper: mapBook         },
+  { name: 'Notifications', gid: '7',   mapper: mapNotification },
 ];
 
 // ⚠️ UPDATE GIDs ABOVE if your tabs are in a different order.
