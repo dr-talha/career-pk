@@ -174,7 +174,7 @@
   function applyFilters() {
     const examType = document.getElementById('filterExamType').value;
     const sort     = document.getElementById('sortBy').value;
-    let f = allData.filter(e => !examType || e.exam_type === examType);
+    let f = allData.filter(e => matchesFilterValue(e.exam_type, examType));
     f = sortItems(f, sort, 'test_date');
     document.getElementById('resultsCount') && (document.getElementById('resultsCount').textContent = `${f.length} exams`);
     renderCards(f, 'resultsGrid', 'exam');
