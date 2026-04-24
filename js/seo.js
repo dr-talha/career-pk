@@ -19,8 +19,8 @@
   const title = (document.title || 'CareerHub Pakistan').trim();
   const descEl = document.querySelector('meta[name="description"]');
   const description = (descEl?.content || 'Find scholarships, jobs, internships, exams and books in one place.').trim();
-  const current = new URL(window.location.href);
-
+  const current = currentUrl;
+  
   // Canonical — normalise index.html → /
   const canonicalPath = current.pathname.endsWith('/index.html')
     ? current.pathname.replace('index.html', '')
