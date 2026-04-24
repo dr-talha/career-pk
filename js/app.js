@@ -573,7 +573,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Re-run after CMS renders cards
   const origInnerHTML = Object.getOwnPropertyDescriptor(Element.prototype, 'innerHTML');
-  const cardGrids = ['scholarshipsGrid','jobsGrid','booksGrid','internshipsGrid','examsGrid','cardsGrid'];
+  const cardGrids = ['scholarshipsGrid','jobsGrid','booksGrid','internshipsGrid','examsGrid','cardsGrid','resultsGrid','searchResultsGrid','favoritesGrid'];
   function hookGrids() {
     cardGrids.forEach(id => {
       const el = document.getElementById(id);
