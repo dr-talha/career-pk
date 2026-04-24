@@ -1,0 +1,138 @@
+# CareerHub Pakistan — Deployment Guide
+## Vercel + GoDaddy Custom Domain
+
+---
+
+## ✅ What Was Fixed
+
+1. **google-sheet-loader.js** — Added CORS proxy fallback so Google Sheets data loads even if direct fetch is blocked.
+2. **vercel.json** — Added proper routing, API function config, and headers.
+3. **api/gemini-chat.js** — Converted Cloudflare Workers function to Vercel Serverless Function.
+4. **api/chat-feedback.js** — Same conversion for feedback endpoint.
+5. **render.yaml + _redirects** — Added Render.com static site config.
+6. **All HTML pages** — No `.html` extension needed in URLs (rewrites handle it).
+
+---
+
+## 🚀 Deploy to Vercel (Recommended)
+
+### Step 1 — Push to GitHub
+```
+git init
+git add .
+git commit -m "CareerHub Pakistan"
+git remote add origin https://github.com/YOUR_USERNAME/careerhub-pk.git
+git push -u origin main
+```
+
+### Step 2 — Deploy on Vercel
+1. Go to https://vercel.com → **New Project**
+2. Import your GitHub repository
+3. **Framework Preset**: Other (leave blank)
+4. **Root Directory**: `.` (leave as-is)
+5. **Build Command**: leave empty
+6. **Output Directory**: `.`
+7. Click **Deploy**
+
+### Step 3 — Add Environment Variable (for AI chatbot)
+1. Vercel Dashboard → Your Project → **Settings → Environment Variables**
+2. Add: `GEMINI_API_KEY` = your Gemini API key
+3. Redeploy after adding
+
+### Step 4 — Connect GoDaddy Domain
+1. Vercel Dashboard → Your Project → **Settings → Domains**
+2. Click **Add Domain** → enter `careerhub.pk` (or your domain)
+3. Vercel will show you DNS records to add
+
+**In GoDaddy:**
+1. Login → My Products → DNS → Manage DNS for your domain
+2. Delete existing A record (if any)
+3. Add these records:
+   - **Type**: A | **Name**: @ | **Value**: `76.76.19.61` | TTL: 600
+   - **Type**: CNAME | **Name**: www | **Value**: `cname.vercel-dns.com` | TTL: 600
+4. Wait 5–60 minutes for DNS propagation
+
+---
+
+## 🌐 Deploy to Render (Alternative)
+
+### Step 1 — Create Static Site
+1. Go to https://render.com → **New → Static Site**
+2. Connect your GitHub repo
+3. **Build Command**: (leave empty)
+4. **Publish Directory**: `.`
+5. Click **Create Static Site**
+
+> **Note:** Render static sites do NOT support serverless functions.
+> The AI chatbot (`/api/gemini-chat`) will not work on Render unless you
+> deploy a separate backend service. The rest of the site (data from Google
+> Sheets, all pages, search, favorites) works perfectly on Render.
+
+### Step 2 — Connect GoDaddy Domain on Render
+1. Render Dashboard → Your Site → **Settings → Custom Domains**
+2. Add your domain (e.g., `careerhub.pk`)
+3. Render shows a CNAME value
+
+**In GoDaddy:**
+1. Login → DNS → Manage DNS
+2. Add: **Type**: CNAME | **Name**: @ (or www) | **Value**: Render's CNAME value
+3. For apex domain (@), use A record pointing to Render's IP (shown in dashboard)
+
+---
+
+## 🔑 Google Sheets — Make Sure It's Published
+
+Your Google Sheet MUST be published as CSV:
+1. In Google Sheets → **File → Share → Publish to web**
+2. Select: **Entire Document** → **Comma-separated values (.csv)**
+3. Click **Publish**
+4. The Sheet ID in `google-sheet-loader.js` must match your published sheet URL
+
+---
+
+## 📋 File Structure (What Goes Where)
+
+```
+career-pk-deploy/
+├── index.html              ← Homepage
+├── *.html                  ← All page files
+├── css/
+│   ├── style.css
+│   └── cms-additions.css
+├── js/
+│   ├── google-sheet-loader.js  ← Fixed: CORS fallback
+│   ├── app.js
+│   ├── gemini-chatbot.js
+│   ├── resume.js
+│   ├── seo.js
+│   ├── cms-auto-refresh-listener.js
+│   └── chatbot-loader.js
+├── api/                    ← Vercel serverless functions (NEW)
+│   ├── gemini-chat.js      ← AI chatbot backend
+│   └── chat-feedback.js    ← Feedback endpoint
+├── logo.svg
+├── logo-banner.svg
+├── vercel.json             ← Vercel config (NEW)
+├── render.yaml             ← Render config (NEW)
+├── _redirects              ← Render/Netlify redirects (NEW)
+├── robots.txt
+└── sitemap.xml
+```
+
+---
+
+## 🐛 Troubleshooting
+
+**Site shows only banner / no cards:**
+- Open browser DevTools → Console tab
+- Look for `[CMS]` messages
+- If you see "HTML response" errors → your Google Sheet is not published
+- If you see CORS errors → the proxy fallback should handle it automatically
+
+**AI chatbot not working:**
+- Check that `GEMINI_API_KEY` is set in Vercel Environment Variables
+- Make sure you redeployed after adding the key
+
+**Custom domain not working:**
+- DNS changes take up to 48 hours (usually under 1 hour)
+- Use https://dnschecker.org to verify your records propagated

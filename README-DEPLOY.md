@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="robots" content="index, follow, max-image-preview:large"/>
+  <meta name="author" content="CareerHub Pakistan"/>
+  <meta property="og:site_name" content="CareerHub Pakistan"/>
+  <meta property="og:locale" content="en_PK"/>
+  <meta property="og:image" content="https://careerpk.com/logo-banner.svg"/>
+    <meta property="og:url" content="https://careerhub.pk/scholarships-international.html"/>
+  <meta property="og:title" content="International Scholarships 2025 for Pakistani Students | CareerHub"/>
+  <meta property="og:description" content="Best international scholarships for Pakistani students 2025. Chevening, DAAD, Australia Awards, Turkiye Burslari — fully funded."/>
+  <meta property="og:type" content="website"/>
+  <meta name="twitter:card" content="summary_large_image"/>
+  <meta name="twitter:title" content="International Scholarships 2025 for Pakistani Students | CareerHub"/>
+  <meta name="twitter:description" content="Best international scholarships for Pakistani students 2025. Chevening, DAAD, Australia Awards, Turkiye Burslari — fully funded abroad scholarships."/>
+  <meta name="twitter:image" content="https://careerpk.com/logo-banner.svg"/>
+  <meta name="theme-color" content="#0f766e"/>
+  <title>International Scholarships 2025 for Pakistani Students | CareerHub</title>
+  <meta name="description" content="Best international scholarships for Pakistani students in 2025. Chevening, DAAD, Australia Awards, Turkiye Burslari, fully funded abroad scholarships."/>
+  <meta name="keywords" content="international scholarships Pakistanis, Chevening scholarship, DAAD Germany, Australia Awards, study abroad Pakistan"/>
+  <link rel="canonical" href="https://careerhub.pk/scholarships-international.html"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link rel="stylesheet" href="css/style.css"/>
+  <link rel="stylesheet" href="css/cms-additions.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <link rel="icon" href="logo.svg" type="image/svg+xml"/><link rel="apple-touch-icon" href="logo.svg"/>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"CollectionPage","name":"International Scholarships for Pakistani Students 2025","url":"https://careerhub.pk/scholarships-international.html"}</script>
+  <script src="js/seo.js" defer></script>
+</head>
+<body>
+<div class="notif-bar" id="notifBar"><div class="notif-track" id="notifTrack"><span>Loading...</span></div><button class="notif-close" onclick="document.getElementById('notifBar').style.display='none'"><i class="fa fa-times"></i></button></div>
+<nav class="navbar" id="navbar">
+  <div class="nav-container">
+    <a href="index.html" class="nav-logo"><img src="logo.svg" alt="CareerPK" height="44"/></a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="index.html">Home</a></li>
+      <li class="has-dropdown"><a href="scholarships.html" class="active">Scholarships <i class="fa fa-chevron-down fa-xs"></i></a><ul class="dropdown"><li><a href="scholarships-national.html">National Scholarships</a></li><li><a href="scholarships-international.html" class="active">International Scholarships</a></li></ul></li>
+      <li class="has-dropdown"><a href="jobs.html">Jobs <i class="fa fa-chevron-down fa-xs"></i></a><ul class="dropdown"><li><a href="jobs-government.html">Government Jobs</a></li><li><a href="jobs-private.html">Private / NGO Jobs</a></li></ul></li>
+      <li><a href="internships.html">Internships</a></li><li><a href="exams.html">Exams</a></li><li><a href="books.html">Books</a></li>
+    </ul>
+    <div class="nav-actions">
+      <button class="nav-icon-btn" onclick="toggleSearch()"><i class="fa fa-search"></i></button>
+      <a href="favorites.html" class="nav-icon-btn"><i class="fa fa-bookmark"></i><span class="fav-count" id="favCount">0</span></a>
+      <button class="nav-icon-btn" onclick="toggleDarkMode()" id="themeBtn"><i class="fa fa-moon"></i></button>
+      <button class="hamburger" id="hamburger" onclick="toggleMenu()"><i class="fa fa-bars"></i></button>
+    </div>
+  </div>
+  <div class="nav-search" id="navSearch"><div class="nav-container"><form action="search.html" method="GET" class="search-form-nav"><i class="fa fa-search"></i><input type="text" name="q" placeholder="Search..." id="navSearchInput"/><button type="submit">Search</button></form></div></div>
+</nav>
+
+<div class="page-header">
+  <div class="container">
+    <div class="breadcrumb"><a href="index.html">Home</a> <i class="fa fa-chevron-right fa-xs"></i> <a href="scholarships.html">Scholarships</a> <i class="fa fa-chevron-right fa-xs"></i> <span>International</span></div>
+    <h1 class="page-title">🌍 International Scholarships 2025</h1>
+    <p class="page-subtitle">Study abroad scholarships for Pakistani students — UK, Germany, Turkey, Australia and more</p>
+    <div class="page-header-links">
+      <span class="chip-static">🇬🇧 UK</span><span class="chip-static">🇩🇪 Germany</span><span class="chip-static">🇦🇺 Australia</span><span class="chip-static">🇹🇷 Turkey</span><span class="chip-static">🇺🇸 USA</span>
+    </div>
+  </div>
+</div>
+
+<div class="filter-bar">
+  <div class="container">
+    <div class="filter-row">
+      <div class="filter-left">
+        <select class="filter-select" id="filterCountry" onchange="applyFilters()">
+          <option value="">🌐 All Countries</option>
+          <option value="UK">🇬🇧 United Kingdom</option>
+          <option value="Germany">🇩🇪 Germany</option>
+          <option value="Turkey">🇹🇷 Turkey</option>
+          <option value="Australia">🇦🇺 Australia</option>
+          <option value="International">🌍 International</option>
+        </select>
+        <select class="filter-select" id="filterFunding" onchange="applyFilters()"><option value="">💰 All Funding</option><option value="Fully Funded">Fully Funded</option><option value="Partial">Partial</option></select>
+        <select class="filter-select" id="filterLevel" onchange="applyFilters()"><option value="">🎓 All Levels</option><option value="Undergraduate">Undergraduate</option><option value="Masters">Masters</option><option value="PhD">PhD</option></select>
+        <button class="btn-clear" onclick="clearFilters()"><i class="fa fa-times"></i> Clear</button>
+      </div>
+      <div class="filter-right">
+        <label class="filter-label">Sort:</label>
+        <select class="filter-select" id="sortBy" onchange="applyFilters()"><option value="newest">Newest</option><option value="oldest">Oldest</option><option value="deadline">Deadline</option></select>
+      </div>
+    </div>
+  </div>
+</div>
+
+<section class="section">
+  <div class="container">
+    <div class="results-info"><span id="resultsCount">Loading...</span></div>
+    <div class="cards-grid" id="resultsGrid"><div class="skeleton-card"></div><div class="skeleton-card"></div><div class="skeleton-card"></div><div class="skeleton-card"></div></div>
+    <div class="empty-state" id="emptyState" style="display:none"><i class="fa fa-inbox"></i><h3>No scholarships found</h3><p>Try adjusting your filters.</p><button class="btn btn-secondary" onclick="clearFilters()">Clear Filters</button></div>
+    <div class="error-state" id="errorState" style="display:none"><i class="fa fa-triangle-exclamation"></i><h3>Could not load data</h3><button class="btn btn-primary" onclick="loadData()">Retry</button></div>
+  </div>
+</section>
+
+<footer class="footer"><div class="container"><div class="footer-bottom"><p>© 2025 CareerHub Pakistan</p><div class="footer-bottom-links"><a href="index.html">Home</a><a href="#">Privacy</a><a href="#">Contact</a></div></div></div></footer>
+<nav class="mobile-bottom-nav"><a href="index.html" class="mob-nav-item"><i class="fa fa-home"></i><span>Home</span></a><a href="scholarships.html" class="mob-nav-item active"><i class="fa fa-graduation-cap"></i><span>Scholarships</span></a><a href="jobs.html" class="mob-nav-item"><i class="fa fa-briefcase"></i><span>Jobs</span></a><a href="exams.html" class="mob-nav-item"><i class="fa fa-file-alt"></i><span>Exams</span></a><a href="books.html" class="mob-nav-item"><i class="fa fa-book"></i><span>Books</span></a></nav>
+
+
+
+<script src="js/google-sheet-loader.js"></script>
+<script src="js/app.js"></script>
+<script src="js/cms-auto-refresh-listener.js"></script>
+<script src="js/chatbot-loader.js"></script>
+  <script>
+  let allData = [];
+  document.addEventListener('DOMContentLoaded', () => { updateFavCount(); onCMSReady(() => { loadData(); updateFavCount(); }); registerAutoRefreshSection('Scholarships', loadData); initializeAutoRefreshListeners(); });
+  function loadData() {
+    try {
+      const data = window.CMS_DATA['Scholarships'] || [];
+      allData = data.filter(s => (s.country||'').trim().toLowerCase() !== 'pakistan');
+      applyFilters();
+    } catch(e) { document.getElementById('errorState').style.display = 'flex'; }
+  }
+  function applyFilters() {
+    const country = document.getElementById('filterCountry').value;
+    const funding = document.getElementById('filterFunding').value;
+    const level   = document.getElementById('filterLevel').value;
+    const sort    = document.getElementById('sortBy').value;
+    let filtered  = allData.filter(s => (!country||(s.country||'').includes(country)) && (!funding||s.funding===funding) && (!level||(s.level||'').includes(level)));
+    filtered = sortItems(filtered, sort);
+    document.getElementById('resultsCount').textContent = `${filtered.length} international scholarship${filtered.length!==1?'s':''} found`;
+    renderCards(filtered, 'resultsGrid', 'scholarship');
+    document.getElementById('emptyState').style.display = filtered.length===0?'flex':'none';
+  }
+  function clearFilters() { ['filterCountry','filterFunding','filterLevel'].forEach(id=>document.getElementById(id).value=''); document.getElementById('sortBy').value='newest'; applyFilters(); }
+</script>
+</body>
+</html>
