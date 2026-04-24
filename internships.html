@@ -144,7 +144,7 @@
     const country  = document.getElementById('filterCountry').value;
     const duration = document.getElementById('filterDuration').value;
     const sort     = document.getElementById('sortBy').value;
-    let f = allData.filter(i => (!type||i.type===type) && (!country||i.country===country) && (!duration||i.duration===duration));
+    let f = allData.filter(i => matchesFilterValue(i.type, type) && matchesFilterValue(i.country, country) && matchesFilterValue(i.duration, duration));
     f = sortItems(f, sort);
     document.getElementById('resultsCount').textContent = `${f.length} internship${f.length!==1?'s':''} found`;
     renderCards(f, 'resultsGrid', 'internship');
