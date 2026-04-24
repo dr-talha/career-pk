@@ -75,12 +75,12 @@
   <script>
   let allData=[];
   document.addEventListener('DOMContentLoaded',()=>{ updateFavCount(); onCMSReady(()=>{loadData();updateFavCount();}); registerAutoRefreshSection('Jobs', loadData); initializeAutoRefreshListeners(); });
-  function loadData(){try{const d=window.CMS_DATA['Jobs'] || [];allData=d.filter(j=>j.type==='Government');applyFilters();}catch(e){document.getElementById('errorState').style.display='flex';}}
-  function applyFilters(){
+  function loadData(){try{const d=window.CMS_DATA['Jobs'] || [];allData=d.filter(j=>isGovernmentType(j.type));applyFilters();}catch(e){document.getElementById('errorState').style.display='flex';}}
+    function applyFilters(){
     const cat=document.getElementById('filterCategory').value;
     const dl=document.getElementById('filterDeadline').value;
     const sort=document.getElementById('sortBy').value;
-    let f=allData.filter(j=>(!cat||j.category===cat));
+    let f=allData.filter(j=>matchesFilterValue(j.category,cat));
     if(dl==='week'){const w=new Date();w.setDate(w.getDate()+7);f=f.filter(j=>new Date(j.deadline)<=w);}
     if(dl==='month'){const m=new Date();m.setMonth(m.getMonth()+1);f=f.filter(j=>new Date(j.deadline)<=m);}
     f=sortItems(f,sort);
