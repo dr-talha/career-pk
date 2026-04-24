@@ -9,16 +9,14 @@
 // Our own Vercel API proxy endpoint
 const PROXY_ENDPOINT = '/api/sheets';
 
-// Direct Google Sheets URL (fallback)
-const SHEET_CSV_BASE = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRkygCswWJqKnQPsVnj27ijDHwELm27oQpG7WRjGDzB5DcZqDjcTKUUp_7c3V_baAhb3U7YbInaJuQ_/pub';
-
+// Direct Google Sheets published CSV links (fallback)
 const TAB_DEFINITIONS = [
-  { name: 'Scholarships',  gid: '80687518', mapper: mapScholarship  },
-  { name: 'Jobs',          gid: '488476366', mapper: mapJob          },
-  { name: 'Internships',   gid: '1499327830', mapper: mapInternship   },
-  { name: 'Exams',         gid: '1358363099', mapper: mapExam         },
-  { name: 'Books',         gid: '1087620474', mapper: mapBook         },
-  { name: 'Notifications', gid: '76781237', mapper: mapNotification },
+  { name: 'Scholarships',  csvUrl: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRdaG_r04rwKR63qkpha0v-REFHkI2M7aXIGNQZf7zmduv8tvV1k4TRBlafEIKKgI8QbXuL6r3rTuMo/pub?output=csv', mapper: mapScholarship },
+  { name: 'Jobs',          csvUrl: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRfOHaqq2H2iBXWn90i11S0bfbPUa--m4Hrkvh34TC11KDTyZymdcTCryAnckRZ8MjeAUb7Bh1-6i4s/pub?output=csv', mapper: mapJob },
+  { name: 'Internships',   csvUrl: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRrDPiwb4Ow0LwD2RJWpATk0b3Blrd_PR21vBn3IPes1EC6Uf9YqDucsF5jWwFrlVB_kA7oaca8uMCS/pub?output=csv', mapper: mapInternship },
+  { name: 'Exams',         csvUrl: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vR1ISsMtV-TMyTQleaS7sxDXAkrGHgk-MobAwOgHry2PLpKaZDQSJbu3JtiaYEYMDQW3M7cFAJO6IPp/pub?output=csv', mapper: mapExam },
+  { name: 'Books',         csvUrl: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTUvgf_xYBH5igPoaGKEWTvk9MxA_VJ7a8104rnB1GJz0ef-zpjy05CjF5_XSlOEDAXh_2CzQOqn9ww/pub?output=csv', mapper: mapBook },
+  { name: 'Notifications', csvUrl: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQlGJdIw3YLBDWCXA7xnDyruQXlsDzm8KJ1cEqrjjwy-0G4leIFOp2yQF6FMhbw9hBnbajs0qb-dsrB/pub?output=csv', mapper: mapNotification },
 ];
 
 // ── Global data object ────────────────────────────────────────
@@ -87,9 +85,9 @@ async function _fetchCSV(tab) {
     console.warn('[CMS] Proxy failed for', tab.name, '—', e1.message, '— trying direct…');
   }
 
-  // Strategy 2: Direct Google Sheets URL
+  // Strategy 2: Direct published CSV URL
   try {
-    const url = SHEET_CSV_BASE + '?output=csv&gid=' + tab.gid + '&single=true&_t=' + Date.now();
+    const url = tab.csvUrl + '&_t=' + Date.now();
     return await _getText(url);
   } catch (e2) {
     console.warn('[CMS] Direct also failed for', tab.name, '—', e2.message);
