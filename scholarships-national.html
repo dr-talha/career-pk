@@ -262,7 +262,7 @@
   function loadScholarships() {
     try {
       const data = window.CMS_DATA['Scholarships'] || [];
-      allScholarships = data.filter(s => (s.country || "") === "Pakistan");
+      allScholarships = data.filter(s => scholarshipMatchesCountry(s, 'Pakistan'));
       applyFilters();
     } catch(e) {
       document.getElementById('resultsGrid').innerHTML = '';
@@ -278,10 +278,10 @@
     const sort     = document.getElementById('sortBy').value;
 
     let filtered = allScholarships.filter(s => {
-      return (!country || s.country === country) &&
-             (!funding || s.funding === funding) &&
-             (!type    || s.type === type) &&
-             (!level   || (s.level || '').includes(level));
+      return scholarshipMatchesCountry(s, country) &&
+             matchesFilterValue(s.funding, funding) &&
+             matchesFilterValue(s.type, type) &&
+             includesFilterValue(s.level, level);
     });
     filtered = sortItems(filtered, sort);
     document.getElementById('resultsCount').textContent = `${filtered.length} scholarship${filtered.length !== 1 ? 's' : ''} found`;
