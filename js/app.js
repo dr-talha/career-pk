@@ -406,7 +406,7 @@ function runSearch(query) {
   const results = [];
 
   (window.CMS_DATA.Scholarships || []).forEach(s => {
-    if ((text(j.title) + text(j.description) + text(j.tags)).toLowerCase().includes(q))
+    if ((text(s.title) + text(s.description) + text(s.tags)).toLowerCase().includes(q))
       results.push({...s, _type:'scholarship'});
   });
   (window.CMS_DATA.Jobs || []).forEach(j => {
