@@ -5,7 +5,7 @@
 // Falls back to CORS proxy if direct fetch fails.
 // ============================================================
 
-const SHEET_CSV_BASE = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRkygCswWJqKnQPsVnj27ijDHwELm27oQpG7WRjGDzB5DcZqDjcTKUUp_7c3V_baAhb3U7YbInaJuQ_/pub';
+const SHEET_CSV_BASE = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRkygCswWJqKnQPsVnj27ijDHwELm27oQpG7WRjGDzB5DcZqDjcTKUUp_7c3V_baAhb3U7YbInaJuQ_/pub?output=csv';
 
 // Numeric GID for each tab — update these if you reorder tabs in your sheet
 const TAB_DEFINITIONS = [
