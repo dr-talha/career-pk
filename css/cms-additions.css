@@ -219,11 +219,11 @@ body.dark .results-info { border-color: #374151; }
   to   { opacity: 1; transform: translateY(0); }
 }
 .card, .exam-card {
-  animation: fadeInUp 0.35s ease both;
-  animation-play-state: paused;
+  opacity: 1;
+  transform: none;
 }
 .card.visible, .exam-card.visible {
-  animation-play-state: running;
+  animation: fadeInUp 0.35s ease both;
 }
 
 /* Stagger children in grids */
