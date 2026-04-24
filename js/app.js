@@ -340,12 +340,14 @@ function renderCards(items, gridId, type) {
   };
   const fn = renderers[type] || cardScholarship;
   grid.innerHTML = items.map(fn).join('');
-
   
   // Fallback visibility guard: cards should never remain hidden if
   // IntersectionObserver hooks miss a render timing edge-case.
   grid.querySelectorAll('.card, .exam-card').forEach((card) => {
     card.classList.add('visible');
+        card.style.opacity = '1';
+    card.style.transform = 'none';
+    card.style.animationPlayState = 'running';
   });
 }
 
